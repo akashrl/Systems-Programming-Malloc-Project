@@ -1,0 +1,129 @@
+--- myMalloc.c	2019-01-31 17:02:54.501899303 -0800
++++ mymalloc.1.c	2019-01-28 20:36:29.000000000 -0800
+@@ -216,7 +216,7 @@
+ 	}
+ 	else if(block_size <= 488)
+ 	{
+-		int x = (block_size-ALLOC_HEADER_SIZE)/8 - 1;
++		int x = block_size/8 - 4;
+ 		for(int i=x;i < N_LISTS-1;i++)
+ 		{
+ 			header * freelist = &freelistSentinels[i];
+@@ -230,12 +230,12 @@
+ 					temp->prev->next = temp->next;
+ 					// temp->allocated = ALLOCATED;
+ 					set_state(temp, ALLOCATED);
+-					return (header *)((char *)temp+ALLOC_HEADER_SIZE);
++					return (header *)((char *)temp+24);
+ 				}
+ 				else
+ 				{
+ 					header *temp1 = split_block(temp,block_size);
+-					return (header *)((char *)temp1+ALLOC_HEADER_SIZE);
++					return (header *)((char *)temp1+24);
+ 				}
+ 			}
+ 		}
+@@ -254,13 +254,13 @@
+ 			set_state(temp, ALLOCATED);
+ 			temp->next->prev = temp->prev;
+ 			temp->prev->next = temp->next;
+-			return (header *)((char *)temp+ALLOC_HEADER_SIZE);
++			return (header *)((char *)temp+24);
+ 		}
+ 		// else if(temp->size >= block_size+40)
+ 		else if (get_size(temp) >= block_size+40)
+ 		{
+ 			header *temp1 = split_block(temp,block_size);
+-			return (header *)((char *)temp1+ALLOC_HEADER_SIZE);
++			return (header *)((char *)temp1+24);
+ 		}
+ 		temp = temp->next;
+ 	}
+@@ -285,8 +285,8 @@
+ 	header *rightHeader = get_header_from_offset(newHeader, get_size(newHeader));
+ 	rightHeader->left_size = get_size(newHeader);
+ 
+-	int i = (get_size(temp) -ALLOC_HEADER_SIZE)/8 - 1;
+-	//printf("%ld %ld\n", get_size(temp), ALLOC_HEADER_SIZE);
++	int i = (get_size(temp)/8) - 4;
++
+ 	if(i<58)
+ 	{
+ 		temp->next->prev = temp->prev;
+@@ -308,7 +308,7 @@
+ 
+ 	header * new_chunk = allocate_chunk(ARENA_SIZE);
+ 
+-	header * temp = get_header_from_offset(new_chunk, -2*ALLOC_HEADER_SIZE);//-sizeof(header));
++	header * temp = get_header_from_offset(new_chunk,-48);
+ 
+ 	// if(temp->allocated != FENCEPOST)
+ 	if (get_state(temp) != FENCEPOST)
+@@ -330,8 +330,7 @@
+ 		if (get_state(temp1) == UNALLOCATED)
+ 		{
+ 			// temp1->size += new_chunk->size + 48;
+-			
+-			set_size(temp1, get_size(temp1) + get_size(new_chunk) + 2*ALLOC_HEADER_SIZE);//sizeof(header));
++			set_size(temp1, temp1 + get_size(new_chunk) + 48);
+ 			temp1->next->prev = temp1->prev;
+ 			temp1->prev->next = temp1->next;
+ 
+@@ -349,19 +348,13 @@
+ 			// temp->allocated = UNALLOCATED;
+ 			set_state(temp, UNALLOCATED);
+ 			// temp->size += new_chunk->size + 24;
+-			set_size(temp, get_size(temp) + get_size(new_chunk) + ALLOC_HEADER_SIZE);
++			set_size(temp, temp + get_size(new_chunk) + 24);
+ 
+ 	                header *freelist = &freelistSentinels[N_LISTS-1];
+-					/*
+         	        freelist->prev->next = temp;
+                 	temp->prev = freelist->prev;
+ 	                freelist->prev = temp;
+ 	                temp->next = freelist;
+-					*/
+-					freelist->next->prev=temp;
+-					temp->next = freelist->next;
+-					freelist->next = temp;
+-					temp->prev = freelist;
+ 
+ 			temp1 = get_header_from_offset(temp,get_size(temp));
+                         temp1->left_size = get_size(temp);
+@@ -393,7 +386,7 @@
+ 	if(p == NULL)
+ 		return;
+ 
+-	header * centralHeader = get_header_from_offset(p,-ALLOC_HEADER_SIZE);
++	header * centralHeader = get_header_from_offset(p,-24);
+ 
+ 	// header * rightHeader = get_header_from_offset(centralHeader, centralHeader->size);
+ 	header * rightHeader = get_header_from_offset(centralHeader, get_size(centralHeader));
+@@ -405,8 +398,8 @@
+ 	// if(centralHeader->allocated == UNALLOCATED)
+ 	if (get_state(centralHeader) == UNALLOCATED)
+ 	{
+-		fprintf(stderr, "Double Free Detected\n");
+-		assert(1);
++		printf("Double Free Detected\n");
++		assert(0);
+ 	}
+ 	// else if(rightHeader -> allocated == UNALLOCATED && leftHeader->allocated == UNALLOCATED)
+ 	else if (get_state(rightHeader) == UNALLOCATED && get_state(leftHeader) == UNALLOCATED)
+@@ -499,12 +492,9 @@
+ {
+ 	if(flag == 0)
+ 	{
+-	    int i;    
+-		header *freelist = NULL;
+-		if(size<=488) {
+-			i = (size - ALLOC_HEADER_SIZE)/8-1;
+-			freelist = &freelistSentinels[i];
+-		}
++	        header *freelist = NULL;
++		if(size<=488)
++			freelist = &freelistSentinels[(size/8)-4];
+ 		else
+ 			freelist = &freelistSentinels[N_LISTS-1];
+ 

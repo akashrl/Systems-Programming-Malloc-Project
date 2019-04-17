@@ -1,0 +1,58 @@
+--- output2	2019-02-01 23:53:16.740636655 -0500
++++ output3	2019-02-01 23:41:51.295716585 -0500
+@@ -35,14 +35,14 @@
+ mallocing 976 bytes
+ [F][A][F]
+ mallocing 8 bytes
+-[F][A][F][F][U][A][F]
++[F][A][U][A][F]
+ FINAL STATE
+ 
+ FREELIST
+ L58: [
+-	addr: 139280
+-	size: 960
+-	left_size: 16
++	addr: 1008
++	size: 992
++	left_size: 992
+ 	allocated: false
+ 	prev: SENTINEL
+ 	next: SENTINEL
+@@ -63,32 +63,20 @@
+ ]
+ [
+ 	addr: 1008
+-	size: 16
++	size: 992
+ 	left_size: 992
+-	allocated: fencepost
+-]
+-[
+-	addr: 139264
+-	size: 16
+-	left_size: 16
+-	allocated: fencepost
+-]
+-[
+-	addr: 139280
+-	size: 960
+-	left_size: 16
+ 	allocated: false
+ 	prev: SENTINEL
+ 	next: SENTINEL
+ ]
+ [
+-	addr: 140240
++	addr: 2000
+ 	size: 32
+-	left_size: 960
++	left_size: 992
+ 	allocated: true
+ ]
+ [
+-	addr: 140272
++	addr: 2032
+ 	size: 16
+ 	left_size: 32
+ 	allocated: fencepost

@@ -1,0 +1,83 @@
+TEST: test_coalesce_chunk_insert.c
+INTIAL STATE
+
+FREELIST
+L58: [
+	addr: 0016
+	size: 992
+	left_size: 16
+	allocated: false
+	prev: SENTINEL
+	next: SENTINEL
+]
+
+TAGS
+[
+	addr: 0000
+	size: 16
+	left_size: 16
+	allocated: fencepost
+]
+[
+	addr: 0016
+	size: 992
+	left_size: 16
+	allocated: false
+	prev: SENTINEL
+	next: SENTINEL
+]
+[
+	addr: 1008
+	size: 16
+	left_size: 992
+	allocated: fencepost
+]
+mallocing 976 bytes
+[F][A][F]
+mallocing 8 bytes
+[F][A][U][A][F]
+FINAL STATE
+
+FREELIST
+L58: [
+	addr: 1008
+	size: 992
+	left_size: 992
+	allocated: false
+	prev: SENTINEL
+	next: SENTINEL
+]
+
+TAGS
+[
+	addr: 0000
+	size: 16
+	left_size: 16
+	allocated: fencepost
+]
+[
+	addr: 0016
+	size: 992
+	left_size: 16
+	allocated: true
+]
+[
+	addr: 1008
+	size: 992
+	left_size: 992
+	allocated: false
+	prev: SENTINEL
+	next: SENTINEL
+]
+[
+	addr: 2000
+	size: 32
+	left_size: 992
+	allocated: true
+]
+[
+	addr: 2032
+	size: 16
+	left_size: 32
+	allocated: fencepost
+]

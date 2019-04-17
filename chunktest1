@@ -1,0 +1,112 @@
+TEST: test_insert_chunk.c
+INTIAL STATE
+
+FREELIST
+L58: [
+	addr: 0016
+	size: 992
+	left_size: 16
+	allocated: false
+	prev: SENTINEL
+	next: SENTINEL
+]
+
+TAGS
+[
+	addr: 0000
+	size: 16
+	left_size: 16
+	allocated: fencepost
+]
+[
+	addr: 0016
+	size: 992
+	left_size: 16
+	allocated: false
+	prev: SENTINEL
+	next: SENTINEL
+]
+[
+	addr: 1008
+	size: 16
+	left_size: 992
+	allocated: fencepost
+]
+mallocing 928 bytes
+[F][U][A][F]
+Calling sbrk to allocate memory between malloc's chunks
+mallocing 928 bytes
+[F][U][A][F][F][U][A][F]
+FINAL STATE
+
+FREELIST
+L3: [
+	addr: 2064
+	size: 48
+	left_size: 16
+	allocated: false
+	prev: SENTINEL
+	next: 0016
+]
+[
+	addr: 0016
+	size: 48
+	left_size: 16
+	allocated: false
+	prev: 2064
+	next: SENTINEL
+]
+
+TAGS
+[
+	addr: 0000
+	size: 16
+	left_size: 16
+	allocated: fencepost
+]
+[
+	addr: 0016
+	size: 48
+	left_size: 16
+	allocated: false
+	prev: 2064
+	next: SENTINEL
+]
+[
+	addr: 0064
+	size: 944
+	left_size: 48
+	allocated: true
+]
+[
+	addr: 1008
+	size: 16
+	left_size: 944
+	allocated: fencepost
+]
+[
+	addr: 2048
+	size: 16
+	left_size: 16
+	allocated: fencepost
+]
+[
+	addr: 2064
+	size: 48
+	left_size: 16
+	allocated: false
+	prev: SENTINEL
+	next: 0016
+]
+[
+	addr: 2112
+	size: 944
+	left_size: 48
+	allocated: true
+]
+[
+	addr: 3056
+	size: 16
+	left_size: 944
+	allocated: fencepost
+]
